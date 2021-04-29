@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>Connexion a votre banque pour finaliser l'achat</h1>
+	<h2 id="erreur"></h2>
+	<label>Nom d'utilisateur :</label>
+	<input type="text" id="name">
+	<label>Mot de passe</label>
+	<input type="password" id="password">
+	<button onClick=connection()>Connexion</button>
+</body>
+</html>
+<script type="text/javascript">
+
+
+async function connection(){
+	try {
+		let name = document.getElementById("name").value;
+		let password = document.getElementById("password").value;
+	
+		let itemID = localStorage.getItem("itemID");
+		let itemDescription = localStorage.getItem("itemName") + " "+localStorage.getItem("itemDescription");
+		let itemPrice = localStorage.getItem("itemPrice");
+		let response = await fetch("http://localhost:8181/ecommerce/rest/article/buyArticle", {
+			method: 'POST',
+			headers: new Headers({
+				"Accept": "application/json",
+				"Content-Type": "application/json"
+			}),
+			body: JSON.stringify({"name": name, "password": password, "site": "ecommerce", "description": itemDescription, "amount": itemPrice}),
+		});
+		let res = await response.text();
+		console.log(res);
+		if(res == "OK"){
+			localStorage.removeItem("itemID");
+			localStorage.removeItem("itemName");
+			localStorage.removeItem("itemDescription");
+			localStorage.removeItem("itemPrice");
+			//document.location.href="http://localhost:8181/ecommerce/index.jsp";
+		}else{
+		document.getElementById("erreur").textContent = "Erreur : Identifiant incorrect";
+		}
+	} catch (error) {
+		console.error(error);
+	}
+}
+</script>

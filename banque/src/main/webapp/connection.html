@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>Connexion</h1>
+	<label>Nom d'utilisateur :</label>
+	<input type="text" id="name">
+	<label>Mot de passe</label>
+	<input type="password" id="password">
+	<button onClick=connection()>Connexion</button>
+	<button onClick=createAccount()>Creation de compte</button>
+</body>
+</html>
+<script type="text/javascript">
+function createAccount() {
+	document.location.href="http://localhost:8080/banque/createAccount.jsp"
+}
+
+async function connection(){
+	try {
+		let name = document.getElementById("name").value;
+		let password = document.getElementById("password").value;
+		
+		let response = await fetch("http://localhost:8080/banque/rest/user/login", {
+			method: 'POST',
+			headers: new Headers({
+				"Accept": "application/json",
+				"Content-Type": "application/json"
+			}),
+			body: JSON.stringify({"name": name, "password": password}),
+		});
+		let res = await response.json();
+		if(res.name == null){
+			localStorage.setItem('idUser', null);
+			
+		}else{
+			localStorage.setItem('idUser', res.id);
+		}
+		document.location.href="http://localhost:8080/banque/account.jsp";
+	} catch (error) {
+		console.error(error);
+	}
+}
+</script>

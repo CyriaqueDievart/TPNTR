@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<h1>Bienvenue sur le site de ecommerce </h1>
+<h2>Voici les articles</h2>
+<div style="display: flex" id="articles">
+	
+</div>
+</body>
+</html>
+<script type="text/javascript">
+
+async function getElements(){
+	try {
+		let article = document.getElementById("articles");
+	
+			let response = await fetch("http://localhost:8181/ecommerce/rest/article/getArticle", {
+				method: 'GET',
+				headers: new Headers({
+					"Accept": "application/json",
+					"Content-Type": "application/json"
+				})
+			});
+			let res = await response.json();
+			console.log(res);
+			var i = 0;
+			for(i = 0;i < res.length;i++){
+				article.innerHTML += "<div><div>Nom : "+res[i].name+"</div><div>description : "+res[i].description+"</div><div>Prix : "+res[i].price+"</div><button onClick=buyItem("+res[i].id+",'"+res[i].name+"','"+res[i].description+"',"+res[i].price+")>Acheter</button>";
+				
+				article.innerHTML +="</div>";
+			}
+		
+	} catch (error) {
+		console.error(error);
+	}
+}
+function buyItem(id,name,description,price){
+	console.log(id);
+	localStorage.setItem("itemID", id);
+	localStorage.setItem("itemName", name);
+	localStorage.setItem("itemDescription", description);
+	localStorage.setItem("itemPrice", price);
+	document.location.href="http://localhost:8181/ecommerce/connection.jsp";
+}
+getElements();
+</script>
